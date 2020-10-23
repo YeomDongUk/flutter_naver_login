@@ -55,9 +55,14 @@ public class SwiftFlutterNaverLoginPlugin:FlutterPluginAppLifeCycleDelegate, Flu
     }
     
     public func getInfo() {
-        guard let isValidAccessToken = thirdPartyLoginConn?.isValidAccessTokenExpireTimeNow() else { return }
+        guard let isValidAccessToken = thirdPartyLoginConn?.isValidAccessTokenExpireTimeNow() else {
+            SwiftFlutterNaverLoginPlugin.naverResult!(FlutterError(code: "LoginError", message: "isValidAccessToken is Not Valid", details: "isValidAccessToken is Not Valid"))
+            return
+        }
+        print("isValidAccessToken")
         print(isValidAccessToken)
         if !isValidAccessToken {
+            SwiftFlutterNaverLoginPlugin.naverResult!(FlutterError(code: "LoginError", message: "isValidAccessToken is Not Valid", details: "isValidAccessToken is Not Valid"))
             return
         }
         
@@ -119,6 +124,9 @@ public class SwiftFlutterNaverLoginPlugin:FlutterPluginAppLifeCycleDelegate, Flu
     
     
     override public func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+        if !url.absoluteString.contains("authCode") {
+            SwiftFlutterNaverLoginPlugin.naverResult!(FlutterError(code: "LoginError", message: "Login Fail", details: "사용자가 중간에 취소함"))
+        }
         NaverThirdPartyLoginConnection.getSharedInstance().application(app, open: url, options: options)
         return false;
     }
@@ -133,6 +141,7 @@ public class SwiftFlutterNaverLoginPlugin:FlutterPluginAppLifeCycleDelegate, Flu
     }
     
     public func oauth20ConnectionDidFinishDeleteToken() {
+        print("oauth20ConnectionDidFinishDeleteToken")
         let info = [
             "status": "cancelledByUser",
             "isLogin": false,
@@ -144,6 +153,7 @@ public class SwiftFlutterNaverLoginPlugin:FlutterPluginAppLifeCycleDelegate, Flu
     }
     
     public func oauth20Connection(_ oauthConnection: NaverThirdPartyLoginConnection!, didFailWithError error: Error!) {
+        print("oauth20Connection");
         let info = [
             "status": "cancelledByUser",
             "isLogin": false,
@@ -152,5 +162,6 @@ public class SwiftFlutterNaverLoginPlugin:FlutterPluginAppLifeCycleDelegate, Flu
         SwiftFlutterNaverLoginPlugin.naverResult!(info)
         
     }
+    
     
 }

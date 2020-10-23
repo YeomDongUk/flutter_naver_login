@@ -8,10 +8,14 @@ class FlutterNaverLogin {
       const MethodChannel('flutter_naver_login');
 
   static Future<NaverLoginResult> logIn() async {
-    final Map<dynamic, dynamic> res = await _channel.invokeMethod('logIn');
+    try {
+      final Map<dynamic, dynamic> res = await _channel.invokeMethod('logIn');
 
-    return _delayedToResult(
-        new NaverLoginResult._(res.cast<String, dynamic>()));
+      return _delayedToResult(
+          new NaverLoginResult._(res.cast<String, dynamic>()));
+    } catch (error) {
+      throw error;
+    }
   }
 
   static Future<NaverLoginResult> logOut() async {
