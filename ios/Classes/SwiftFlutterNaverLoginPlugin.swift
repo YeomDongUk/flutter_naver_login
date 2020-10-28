@@ -125,14 +125,18 @@ public class SwiftFlutterNaverLoginPlugin:FlutterPluginAppLifeCycleDelegate, Flu
     
     override public func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         if !url.absoluteString.contains("authCode") {
-            SwiftFlutterNaverLoginPlugin.naverResult!(FlutterError(code: "LoginError", message: "Login Fail", details: "사용자가 중간에 취소함"))
+            if SwiftFlutterNaverLoginPlugin.naverResult == nil{
+                SwiftFlutterNaverLoginPlugin.naverResult!(FlutterError(code: "LoginError", message: "Login Fail", details: "사용자가 중간에 취소함"))
+            }
+          
+        }else{
+           return NaverThirdPartyLoginConnection.getSharedInstance().application(app, open: url, options: options)
         }
-        NaverThirdPartyLoginConnection.getSharedInstance().application(app, open: url, options: options)
+        
         return false;
     }
     
     public func oauth20ConnectionDidFinishRequestACTokenWithAuthCode() {
-        print("oauth20ConnectionDidFinishRequestACTokenWithAuthCode")
         self.getInfo()
     }
     
